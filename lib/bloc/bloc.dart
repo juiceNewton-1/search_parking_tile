@@ -3,6 +3,7 @@ import 'package:parking_app/bloc/events.dart';
 import 'package:parking_app/bloc/state.dart';
 import 'package:parking_app/models/tile.dart';
 import 'package:parking_app/utils/tile_calculator.dart';
+import 'package:http/http.dart' as http;
 
 class SearchBloc extends Bloc<AppEvent, AppState> {
   SearchBloc() : super(IntialState()) {
@@ -10,7 +11,7 @@ class SearchBloc extends Bloc<AppEvent, AppState> {
     on<RestartEvent>(_onRestartEvent);
   }
 
-  void _onSearchEvent(SearchEvent searchEvent, Emitter<AppState> emit) {
+  void _onSearchEvent(SearchEvent searchEvent, Emitter<AppState> emit) async {
     emit(LoadingState());
     try {
       final tile = _calculateTile(
@@ -19,7 +20,22 @@ class SearchBloc extends Bloc<AppEvent, AppState> {
         int.parse(searchEvent.zoom),
       );
       final tileUrl = _getParksTileUrl(tile.x, tile.y, tile.z);
-      emit(SearchCompletedState(tile: tile, tileUrl: tileUrl));
+
+      final urlResponse = await http
+          .get(Uri.parse(tileUrl))
+          .timeout(const Duration(seconds: 10));
+
+      if (urlResponse.statusCode == 200) {
+        emit(SearchCompletedState(tile: tile, tileUrl: tileUrl));
+      } else {
+        emit(
+          NotFoundState(
+            latitude: searchEvent.latitude,
+            longitude: searchEvent.longitude,
+            zoom: searchEvent.zoom,
+          ),
+        );
+      }
     } catch (e) {
       emit(ErrorState(errorMessage: e.toString()));
     }

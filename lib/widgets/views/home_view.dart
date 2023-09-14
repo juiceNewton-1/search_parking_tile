@@ -13,7 +13,6 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  
   final _latitudeController = TextEditingController();
   final _longitudeController = TextEditingController();
   final _zoomController = TextEditingController();
@@ -37,7 +36,7 @@ class _HomeViewState extends State<HomeView> {
   final _formKey = GlobalKey<FormState>();
 
   String? _latitudeValidator(String? query) {
-    final latitudeRegExp =RegExp(r'^-?((\d|[1-8]\d|90)(\.\d+)?)$');
+    final latitudeRegExp = RegExp(r'^-?((\d|[1-8]\d|90)(\.\d+)?)$');
     if (query == null || !latitudeRegExp.hasMatch(query.trim())) {
       return 'Введите корректное значение широты';
     }
@@ -45,8 +44,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   String? _longitudeValidator(String? query) {
-    final longitudeRegExp =
-        RegExp(r'^-?((\d|[1-9]\d|1[0-7]\d|180)(\.\d+)?)$');
+    final longitudeRegExp = RegExp(r'^-?((\d|[1-9]\d|1[0-7]\d|180)(\.\d+)?)$');
 
     if (query == null || !longitudeRegExp.hasMatch(query.trim())) {
       return 'Введите корректно значение долготы';
@@ -91,6 +89,21 @@ class _HomeViewState extends State<HomeView> {
                       _clearAllTextControllers();
                       context.read<SearchBloc>().add(RestartEvent());
                     });
+              }
+              if (state is NotFoundState) {
+                return _NotFoundColumn(
+                  onPressed: () {
+                    _clearAllTextControllers();
+                    context.read<SearchBloc>().add(RestartEvent());
+                  },
+                  refreshAction: () => context.read<SearchBloc>().add(
+                        SearchEvent(
+                          latitude: state.latitude,
+                          longitude: state.longitude,
+                          zoom: state.zoom,
+                        ),
+                      ),
+                );
               }
               if (state is IntialState) {
                 return Form(
@@ -151,11 +164,12 @@ class _HomeViewState extends State<HomeView> {
 class _SearchCompletedColumn extends StatelessWidget {
   final Tile tile;
   final String tileUrl;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
+
   const _SearchCompletedColumn({
     required this.tile,
     required this.tileUrl,
-    required this.onPressed,
+    this.onPressed,
   });
 
   @override
@@ -180,13 +194,43 @@ class _SearchCompletedColumn extends StatelessWidget {
   }
 }
 
+class _NotFoundColumn extends StatelessWidget {
+  final VoidCallback? onPressed;
+  final VoidCallback? refreshAction;
+
+  const _NotFoundColumn({
+    this.onPressed,
+    this.refreshAction,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          onPressed: refreshAction,
+          icon: const Icon(Icons.refresh),
+        ),
+        const SizedBox(height: 20),
+        const Text('По вашему запросу ничего не было найдено'),
+        const SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: onPressed,
+          child: const Text('Назад'),
+        )
+      ],
+    );
+  }
+}
+
 class _ErrorColumn extends StatelessWidget {
   final String errorMessage;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   const _ErrorColumn({
     required this.errorMessage,
-    required this.onPressed,
+    this.onPressed,
   });
 
   @override

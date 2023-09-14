@@ -16,6 +16,18 @@ class SearchCompletedState implements AppState {
 
 class LoadingState implements AppState {}
 
+class NotFoundState implements AppState {
+  final String latitude;
+  final String longitude;
+  final String zoom;
+
+  NotFoundState({
+    required this.latitude,
+    required this.longitude,
+    required this.zoom,
+  });
+}
+
 class ErrorState implements AppState {
   final String errorMessage;
 
