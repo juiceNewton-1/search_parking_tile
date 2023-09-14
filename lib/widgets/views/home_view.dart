@@ -208,9 +208,9 @@ class _NotFoundColumn extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        IconButton(
+        ElevatedButton(
           onPressed: refreshAction,
-          icon: const Icon(Icons.refresh),
+          child: const Icon(Icons.refresh),
         ),
         const SizedBox(height: 20),
         const Text('По вашему запросу ничего не было найдено'),
