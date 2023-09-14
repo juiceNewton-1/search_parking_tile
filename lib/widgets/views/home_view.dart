@@ -38,7 +38,7 @@ class _HomeViewState extends State<HomeView> {
 
   String? _latitudeValidator(String? query) {
     final latitudeRegExp =RegExp(r'^-?((\d|[1-8]\d|90)(\.\d+)?)$');
-    if (query == null || !latitudeRegExp.hasMatch(query)) {
+    if (query == null || !latitudeRegExp.hasMatch(query.trim())) {
       return 'Введите корректное значение широты';
     }
     return null;
@@ -48,7 +48,7 @@ class _HomeViewState extends State<HomeView> {
     final longitudeRegExp =
         RegExp(r'^-?((\d|[1-9]\d|1[0-7]\d|180)(\.\d+)?)$');
 
-    if (query == null || !longitudeRegExp.hasMatch(query)) {
+    if (query == null || !longitudeRegExp.hasMatch(query.trim())) {
       return 'Введите корректно значение долготы';
     }
 
@@ -57,7 +57,7 @@ class _HomeViewState extends State<HomeView> {
 
   String? _zoomValidator(String? query) {
     final zoomRegExp = RegExp(r'^(1[4-9]|20)$');
-    if (query == null || !zoomRegExp.hasMatch(query)) {
+    if (query == null || !zoomRegExp.hasMatch(query.trim())) {
       return 'Значение приближения должно быть в диапазоне от 14 до 20';
     }
     return null;
