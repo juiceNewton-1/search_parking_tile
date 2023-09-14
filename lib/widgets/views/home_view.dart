@@ -210,7 +210,7 @@ class _NotFoundColumn extends StatelessWidget {
       children: [
         ElevatedButton(
           onPressed: refreshAction,
-          child: const Icon(Icons.refresh),
+          child: const Text('Обновить'),
         ),
         const SizedBox(height: 20),
         const Text('По вашему запросу ничего не было найдено'),
